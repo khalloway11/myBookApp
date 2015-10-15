@@ -19,32 +19,39 @@
     </head>
     <body>
         <h1>Author List</h1>
-            <table width="500" border="1" cellspacing="0" cellpadding="4">
-                <tr style="background-color: black;color:white;">
-                    <th></th>
-                    <th align="left" class="tableHead">ID</th>
-                    <th align="left" class="tableHead">Author Name</th>
-                    <th align="right" class="tableHead">Date Added</th>
-                </tr>
-            <c:forEach var="a" items="${authors}" varStatus="rowCount">
-                <c:choose>
-                    <c:when test="${rowCount.count % 2 == 0}">
-                        <tr style="background-color: white;">
-                    </c:when>
-                    <c:otherwise>
-                        <tr style="background-color: #ccffff;">
-                    </c:otherwise>
-                </c:choose>
-                <td align="left"><input type="radio" name="author" value=${a.authorId}></td>
-                <td align="left">${a.authorId}</td>
-                <td align="left">${a.authorName}</td>
-                <td align="right">
-                    <fmt:formatDate pattern="M/d/yyyy" value="${a.dateAdded}"></fmt:formatDate>
-                </td>
+        
+        <form method="POST" action="AuthorController?action=addEditDelete">
+        <input type="submit" value="Add/Edit" name="submit" />&nbsp;
+        <input type="submit" value="Delete" name="submit" />
+        <br><br>
+        <table width="500" border="1" cellspacing="0" cellpadding="4">
+            <tr style="background-color: black;color:white;">
+                <th align="left" class="tableHead">ID</th>
+                <th align="left" class="tableHead">Author Name</th>
+                <th align="right" class="tableHead">Date Added</th>
             </tr>
-            </c:forEach>
-            </table>
-            <input type="button" onclick="/AuthorController?action=list">
+        <c:forEach var="a" items="${authors}" varStatus="rowCount">
+            <c:choose>
+                <c:when test="${rowCount.count % 2 == 0}">
+                    <tr style="background-color: white;">
+                </c:when>
+                <c:otherwise>
+                    <tr style="background-color: #ccffff;">
+                </c:otherwise>
+            </c:choose>
+            <td><input type="checkbox" name="authorId" value="${a.authorId}" /></td>
+            <td align="left">${a.authorName}</td>
+            <td align="right">
+                <fmt:formatDate pattern="M/d/yyyy" value="${a.dateAdded}"></fmt:formatDate>
+            </td>
+        </tr>
+        </c:forEach>
+        </table>
+        <br>
+        <input type="submit" value="Add/Edit" name="submit" />&nbsp;
+        <input type="submit" value="Delete" name="submit" />
+        </form>
+        
         <c:if test="${errMsg != null}">
             <p style="font-weight: bold;color: red;width:500px;">Sorry, data could not be retrieved:<br>
                 ${errMsg}</p>

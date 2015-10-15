@@ -1,15 +1,11 @@
 package edu.wctc.kh.mybookapp2.controllers;
 
-import edu.wctc.kh.mybookapp2.models.Author;
-import edu.wctc.kh.mybookapp2.models.AuthorDao;
-import edu.wctc.kh.mybookapp2.models.AuthorDaoStrategy;
-import edu.wctc.kh.mybookapp2.models.AuthorService;
-import edu.wctc.kh.mybookapp2.models.ConnPoolAuthorDao;
-import edu.wctc.kh.mybookapp2.models.DBStrategy;
-import edu.wctc.kh.mybookapp2.models.MySqlDb;
-import edu.wctc.kh.mybookapp2.models.MySqlDbStrategy;
+import edu.wctc.kh.mybookapp2.entity.Author;
+import edu.wctc.kh.mybookapp2.service.AuthorFacade;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import javax.inject.Inject;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.servlet.RequestDispatcher;
@@ -38,6 +34,9 @@ public class AuthorController extends HttpServlet {
     private static final String UPDATE_ACTION = "update";
     private static final String DELETE_ACTION = "delete";
     private static final String ACTION_PARAM = "action";
+    
+    @Inject
+    private AuthorFacade authService;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -62,11 +61,7 @@ public class AuthorController extends HttpServlet {
          which is not very efficient. In the future we'll learn how to use
          a connection pool to improve this.
          */
-        DBStrategy db = new MySqlDb();
-        AuthorDaoStrategy authDao
-                = new AuthorDao(db, "com.mysql.jdbc.Driver",
-                        "jdbc:mysql://localhost:3306/book", "root", "admin");
-        AuthorService authService = new AuthorService(authDao);
+
         List<Author> authors = null;
 
         try {
@@ -84,7 +79,7 @@ public class AuthorController extends HttpServlet {
              */
             switch (action){
                 case LIST_ACTION:
-                    authors = authService.getAllAuthors();
+                    authors = authService.findAll();
                     request.setAttribute("authors", authors);
                     destination = LIST_PAGE;
                     break;
@@ -92,10 +87,28 @@ public class AuthorController extends HttpServlet {
                     //request.setAttribute("author",authorName);
                     break;
                 case UPDATE_ACTION:
+                    String authorName = request.getParameter("authorName");
+                    String authorID = request.getParameter("authorID");
+                    Author author = null;
+                    
+                    if(authorID == null){
+                        author = new Author(0);
+                        author.setAuthorName(authorName);
+                        author.setDateCreated(new Date());
+                    } else {
+                        author = authService.find(new Integer(authorID));
+                    }
+                    
+                    author.setAuthorName(authorName);
+                    
+                    authService.edit(author);
+                    
                     break;
                 case DELETE_ACTION:
-                    authService.d
-                    authors = authService.getAllAuthors();
+                    authorID = request.getParameter("authorID");
+                    author = authService.find(new Integer(authorID));
+                    authService.remove(author);
+                    authors = authService.findAll();
                     request.setAttribute("authors", authors);
                     destination = LIST_PAGE;
                     break;
@@ -114,6 +127,11 @@ public class AuthorController extends HttpServlet {
         RequestDispatcher dispatcher
                 = getServletContext().getRequestDispatcher(destination);
         dispatcher.forward(request, response);
+    }
+    
+    @Override
+    public void init(){
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
