@@ -8,6 +8,8 @@ package edu.wctc.kh.mybookapp2.models;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -25,7 +27,7 @@ public class SQLPrepStatementBuilder implements PrepStatementBuilderStrategy {
      * @throws SQLException
      */
     @Override
-    public PreparedStatement buildDeleteStatement(Connection conn_loc, String tableName, String targetCol) throws SQLException{
+    public PreparedStatement buildDeleteStatement(Connection conn_loc, String tableName, String targetCol, Object targetValue) throws SQLException{
         //syntax:
         //delete from [table] where [column] (<,<=,=,>=,>,!=,BETWEEN,LIKE,IN) [value]
         PreparedStatement pstmt = null;
@@ -38,6 +40,7 @@ public class SQLPrepStatementBuilder implements PrepStatementBuilderStrategy {
             final String finalSQL = sql.toString();
             System.out.println(finalSQL);
             pstmt = conn_loc.prepareStatement(finalSQL);
+            pstmt.setObject(1, targetValue);
         }
         return pstmt;
     }

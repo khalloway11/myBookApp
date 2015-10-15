@@ -32,6 +32,7 @@ public class AuthorController extends HttpServlet {
 
     private static final String NO_PARAM_ERR_MSG = "No request parameter identified";
     private static final String LIST_PAGE = "/listAuthors.jsp";
+    private static final String ADD_PAGE = "/addAuthorSuccess.html";
     private static final String LIST_ACTION = "list";
     private static final String ADD_ACTION = "add";
     private static final String UPDATE_ACTION = "update";
@@ -66,6 +67,7 @@ public class AuthorController extends HttpServlet {
                 = new AuthorDao(db, "com.mysql.jdbc.Driver",
                         "jdbc:mysql://localhost:3306/book", "root", "admin");
         AuthorService authService = new AuthorService(authDao);
+        List<Author> authors = null;
 
         try {
             /*
@@ -80,23 +82,29 @@ public class AuthorController extends HttpServlet {
              Determine what action to take based on a passed in QueryString
              Parameter
              */
-            if (action.equals(LIST_ACTION)) {
-                List<Author> authors = null;
-                authors = authService.getAllAuthors();
-                request.setAttribute("authors", authors);
-                destination = LIST_PAGE;
-
-            } else if (action.equals("ADD_ACTION")) {
-                // coming soon
-            } else if (action.equals("UPDATE_ACTION")) {
-                // coming soon
-            } else if (action.equals("DELETE_ACTION")) {
-                // coming soon
-            } else {
-                // no param identified in request, must be an error
-                request.setAttribute("errMsg", NO_PARAM_ERR_MSG);
-                destination = LIST_PAGE;
+            switch (action){
+                case LIST_ACTION:
+                    authors = authService.getAllAuthors();
+                    request.setAttribute("authors", authors);
+                    destination = LIST_PAGE;
+                    break;
+                case ADD_ACTION:
+                    //request.setAttribute("author",authorName);
+                    break;
+                case UPDATE_ACTION:
+                    break;
+                case DELETE_ACTION:
+                    authService.d
+                    authors = authService.getAllAuthors();
+                    request.setAttribute("authors", authors);
+                    destination = LIST_PAGE;
+                    break;
+                default:
+                    // no param identified in request, must be an error
+                    request.setAttribute("errMsg", NO_PARAM_ERR_MSG);
+                    destination = LIST_PAGE;
             }
+            
             
         } catch (Exception e) {
             request.setAttribute("errMsg", e.getCause().getMessage());

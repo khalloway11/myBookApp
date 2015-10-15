@@ -13,14 +13,8 @@ import javax.sql.DataSource;
  *
  * @author Keiji
  */
-public class MySqlDb implements DBStrategy{
+public class MySqlDb implements DBStrategy {
     //class variables
-    private static final String SELECT_ALL = "SELECT * FROM ";
-    private static final String SELECT_QUERY = "SELECT ? FROM ";
-    private static final String SELECT_TARGET = "WHERE ? = ? ";
-    private static final String DELETE_QUERY = "DELETE ? FROM ";
-    private static final String DELETE_TARGET = "WHERE ? = ? ";
-    private static final String INSERT_QUERY = "INSERT INTO ";
     private Connection conn;
     private final PrepStatementBuilderStrategy pstmtBuilder = new SQLPrepStatementBuilder();
     
@@ -29,13 +23,18 @@ public class MySqlDb implements DBStrategy{
 	conn = DriverManager.getConnection(url, userName, password);
     }
     
+    @Override
+    public void openConnection(DataSource ds) throws Exception {
+        conn = ds.getConnection();
+    }
+    
     public void closeConnection() throws SQLException {
         conn.close();
     }
     
     public List<Map<String, Object>> findAllRecords(String tableName) throws SQLException{
         List<Map<String, Object>> records = new ArrayList<>();
-        String sql = SELECT_ALL + tableName;
+        String sql = "SELECT * FROM " + tableName;
 
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
@@ -53,27 +52,27 @@ public class MySqlDb implements DBStrategy{
         return records;
     }
     
-    public void deleteById(String tableName, String PKName, Object target) throws SQLException{
+    @Override
+    public void deleteById(String tableName, String primaryKeyFieldName, Object primaryKeyValue) throws SQLException{
         //delete from [table] where [column] = [value]
         
-        String sql = "DELETE FROM " + tableName + " WHERE " + PKName + "=";
-        if(target instanceof String){
-            sql += "\"" + (String)target + "\"";
+        String sql = "DELETE FROM " + tableName + " WHERE " + primaryKeyFieldName + "=";
+        if(primaryKeyValue instanceof String){
+            sql += "\"" + (String)primaryKeyValue + "\"";
         } else {
-            sql += (String)target;
+            sql += (String)primaryKeyValue;
         }
         Statement stmt = conn.createStatement();
         stmt.executeUpdate(sql);
     }
     
-    public int delete(String tableName, String targetCol, Object targetRecord) throws SQLException{
+    public int prepDelete(String tableName, String targetCol, Object targetRecord) throws SQLException{
         //syntax:
         //delete from [table] where [column] (<,<=,=,>=,>,!=,BETWEEN,LIKE,IN) [value]
         int deleted = 0;
-        PreparedStatement pstmt = pstmtBuilder.buildDeleteStatement(conn, tableName, targetCol);
+        PreparedStatement pstmt = pstmtBuilder.buildDeleteStatement(conn, tableName, targetCol, targetRecord);
         
         try{
-            pstmt.setObject(1, targetRecord);
             deleted = pstmt.executeUpdate();
         } catch (SQLException sqle) {
             System.out.println(sqle);
@@ -121,41 +120,23 @@ public class MySqlDb implements DBStrategy{
         return updated;
     }
     
-    public int insert(String tableName, String[] columns, Object[] newRecordInfo) throws SQLException{
-        //syntax:
-        //INSTERT INTO [table] ([columns])
-        //VALUES ([values])
-        int index = 1;
-        PreparedStatement pstmt = null;
-        if((columns.length > 0) && (newRecordInfo.length > 0) && (columns.length == newRecordInfo.length)){
-            pstmt = pstmtBuilder.buildInsertStatement(conn, tableName, columns.length, newRecordInfo.length);
-        }
-        for(int i = 0; i < columns.length; i++){
-            pstmt.setObject(index, columns[index]);
-        }
-        return index/2;
+    public void createRecord(String tableName, Object[] newRecordInfo) throws SQLException{
+        
     }
     
-//    public static void main(String[] args) throws Exception{
-//        MySqlDb db = new MySqlDb();
-//        db.openConnection("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin");
-//        List<Map<String, Object>> records = db.findAllRecords("author");
+    public static void main(String[] args) throws Exception{
+        MySqlDb db = new MySqlDb();
+        db.openConnection("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin");
+        List<Map<String, Object>> records = db.findAllRecords("author");
+        for(Map record : records){
+            System.out.println(record);
+        }
+        db.prepDelete("author", "author_id", 1);
+        db.update("author", "author_name", "Joe Schmoe", "Steve Peeve");
+//        records = db.findAllRecords("author");
 //        for(Map record : records){
 //            System.out.println(record);
 //        }
-//        db.delete("author", "author_id", 1);
-//        db.update("author", "author_name", "Joe Schmoe", "Steve Peeve");
-////        records = db.findAllRecords("author");
-////        for(Map record : records){
-////            System.out.println(record);
-////        }
-//        db.closeConnection();
-//    }
-
-    @Override
-    public void openConnection(DataSource ds) throws Exception {
-        conn = ds.getConnection();
+        db.closeConnection();
     }
-
 }
-

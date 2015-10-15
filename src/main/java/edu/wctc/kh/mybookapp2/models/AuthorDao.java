@@ -55,6 +55,23 @@ public class AuthorDao implements AuthorDaoStrategy {
         
     }
     
+    @Override
+    public Author getAuthorById(Integer authorId) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteAuthor(Integer authorId) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void saveAuthor(Integer authorId, String authorName) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    //public final void deleteById()
+    
     // Test harness - not used in production
     public static void main(String[] args) throws Exception {
         AuthorDao dao = new AuthorDao(new MySqlDbStrategy(),"com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin");
@@ -64,4 +81,6 @@ public class AuthorDao implements AuthorDaoStrategy {
             System.out.println(a);
         }
     }
+
+    
 }

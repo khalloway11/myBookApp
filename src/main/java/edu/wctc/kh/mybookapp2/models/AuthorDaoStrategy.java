@@ -8,6 +8,12 @@ import java.util.List;
  */
 public interface AuthorDaoStrategy {
 
+    Author getAuthorById(Integer authorId) throws Exception;
+    
     List<Author> getAllAuthors() throws Exception;
+
+    void deleteAuthor(Integer authorId) throws Exception;    
+    
+    void saveAuthor(Integer authorId, String authorName) throws Exception;
     
 }

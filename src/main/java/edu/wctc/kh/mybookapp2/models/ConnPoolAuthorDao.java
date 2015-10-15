@@ -60,6 +60,21 @@ public class ConnPoolAuthorDao implements AuthorDaoStrategy {
         return records;
 
     }
+    
+    @Override
+    public Author getAuthorById(Integer authorId) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteAuthor(Integer authorId) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void saveAuthor(Integer authorId, String authorName) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     // Test harness - not used in production
     // Uses a ad-hoc connection pool and DataSource object to test the code
@@ -117,4 +132,6 @@ public class ConnPoolAuthorDao implements AuthorDaoStrategy {
             System.out.println(a);
         }
     }
+
+  
 }

@@ -8,13 +8,14 @@ package edu.wctc.kh.mybookapp2.models;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  *
  * @author Keiji
  */
 public interface PrepStatementBuilderStrategy {
-    public PreparedStatement buildDeleteStatement(Connection conn_loc, String tableName, String targetCol) throws SQLException;
+    public PreparedStatement buildDeleteStatement(Connection conn_loc, String tableName, String targetCol, Object targetValue) throws SQLException;
     public PreparedStatement buildUpdateStatement(Connection conn_loc, String tableName, String targetCol, boolean hasWhere) throws SQLException;
     public PreparedStatement buildInsertStatement(Connection conn_loc, String tableName, int numCols, int numValues) throws SQLException;
 }

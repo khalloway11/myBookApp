@@ -22,6 +22,11 @@ public class AuthorService {
         return dao.getAllAuthors();
     }
     
+    public final void deleteAuthor(Object authorID){
+        dao.deleteById(authorID);
+    }
+    
+    
     // Test harness - not used in production
     public static void main(String[] args) throws Exception {
         AuthorService authServ = new AuthorService(
