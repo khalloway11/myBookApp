@@ -42,7 +42,7 @@
             <td><input type="checkbox" name="authorId" value="${a.authorId}" /></td>
             <td align="left">${a.authorName}</td>
             <td align="right">
-                <fmt:formatDate pattern="M/d/yyyy" value="${a.dateAdded}"></fmt:formatDate>
+                <fmt:formatDate pattern="M/d/yyyy" value="${a.dateCreated}"></fmt:formatDate>
             </td>
         </tr>
         </c:forEach>
