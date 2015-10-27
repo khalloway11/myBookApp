@@ -1,8 +1,10 @@
 package edu.wctc.kh.mybookapp2.controllers;
 
 import edu.wctc.kh.mybookapp2.entity.Author;
+import edu.wctc.kh.mybookapp2.service.AbstractFacade;
 import edu.wctc.kh.mybookapp2.service.AuthorFacade;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.inject.Inject;
@@ -28,15 +30,20 @@ public class AuthorController extends HttpServlet {
 
     private static final String NO_PARAM_ERR_MSG = "No request parameter identified";
     private static final String LIST_PAGE = "/listAuthors.jsp";
-    private static final String ADD_PAGE = "/addAuthorSuccess.html";
+    private static final String ADD_PAGE = "/addAuthor.jsp";
+    private static final String EDIT_PAGE = "/editAuthor.jsp";
+    private static final String SUBMIT_ACTION = "submitRequest";
+    private static final String SUBMIT_PARAM = "submit";
     private static final String LIST_ACTION = "list";
-    private static final String ADD_ACTION = "add";
-    private static final String UPDATE_ACTION = "update";
-    private static final String DELETE_ACTION = "delete";
+    private static final String ADD_ACTION = "Add";
+    private static final String UPDATE_ACTION = "Edit";
+    private static final String DELETE_ACTION = "Delete";
+    private static final String CANCEL_ACTION = "Cancel";
+    private static final String SAVE_ACTION = "Save";
     private static final String ACTION_PARAM = "action";
     
     @Inject
-    private AuthorFacade authService;
+    private AbstractFacade<Author> authService;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -79,43 +86,41 @@ public class AuthorController extends HttpServlet {
              */
             switch (action){
                 case LIST_ACTION:
-                    authors = authService.findAll();
-                    request.setAttribute("authors", authors);
+                    this.refreshList(authService, request);
                     destination = LIST_PAGE;
                     break;
-                case ADD_ACTION:
-                    //request.setAttribute("author",authorName);
-                    break;
-                case UPDATE_ACTION:
-                    String authorName = request.getParameter("authorName");
-                    String authorID = request.getParameter("authorID");
-                    Author author = null;
-                    
-                    if(authorID == null){
-                        author = new Author(0);
-                        author.setAuthorName(authorName);
-                        author.setDateCreated(new Date());
-                    } else {
-                        author = authService.find(new Integer(authorID));
+                case SUBMIT_ACTION:
+                    String subrequest = request.getParameter(SUBMIT_PARAM);
+                    switch(subrequest){
+                        case ADD_ACTION:
+                            //request.setAttribute("author",authorName);
+                            break;
+                        case UPDATE_ACTION:
+                            String authorID = request.getParameter("authorId");
+                            Author author = authService.find(new Integer(authorID));
+                            destination = EDIT_PAGE;
+                            request.setAttribute("author", author);
+                            break;
+                        case DELETE_ACTION:
+                            authorID = request.getParameter("authorId");
+                            author = authService.find(new Integer(authorID));
+                            authService.remove(author);
+                            this.refreshList(authService, request);
+                            destination = LIST_PAGE;
+                            break;
+                        case CANCEL_ACTION:
+                            destination = LIST_PAGE;
+                            this.refreshList(authService, request);
+                            break;
+                        case SAVE_ACTION:
+                            destination=LIST_PAGE;
+                            authorID = request.getParameter("authorId");
+                            author = authService.find(new Integer(authorID));
                     }
-                    
-                    author.setAuthorName(authorName);
-                    
-                    authService.edit(author);
-                    
-                    break;
-                case DELETE_ACTION:
-                    authorID = request.getParameter("authorID");
-                    author = authService.find(new Integer(authorID));
-                    authService.remove(author);
-                    authors = authService.findAll();
-                    request.setAttribute("authors", authors);
-                    destination = LIST_PAGE;
-                    break;
-                default:
-                    // no param identified in request, must be an error
-                    request.setAttribute("errMsg", NO_PARAM_ERR_MSG);
-                    destination = LIST_PAGE;
+//                default:
+//                    // no param identified in request, must be an error
+//                    request.setAttribute("errMsg", NO_PARAM_ERR_MSG);
+//                    destination = LIST_PAGE;
             }
             
             
@@ -129,9 +134,25 @@ public class AuthorController extends HttpServlet {
         dispatcher.forward(request, response);
     }
     
+    private void refreshList(AbstractFacade<Author> authService, HttpServletRequest request){
+        List<Author> authors = authService.findAll();
+        request.setAttribute("authors", authors);
+    }
+    
+    private Author getUpdatedAuthor(HttpServletRequest request) throws Exception {
+        Author updated = new Author();
+        DateFormat df = DateFormat.getDateInstance();
+        updated.setAuthorId(Integer.parseInt(request.getParameter("authorId")));
+        updated.setAuthorName(request.getParameter("authorName"));
+        updated.setDateCreated(df.parse(request.getParameter("dateCreated")));
+        //updated.setBookSet(request.get);
+        
+        return updated;
+    }
+    
     @Override
     public void init(){
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

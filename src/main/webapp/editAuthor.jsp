@@ -20,7 +20,7 @@
     <body>
         <h1>Author List</h1>
         
-        <form method="POST" action="AuthorController">
+        <form method="POST" action="AuthorController?action=submitRequest">
             <table width="500" border="1" cellspacing="0" cellpadding="4">
                 <!--
                     In the EL expression below using 'not empty' is better than
@@ -41,17 +41,31 @@
                 </tr>
                 
                 <c:choose>
+                    <c:when test="${not empty author.bookSet}">
+                    <tr>
+                        <td style="background-color: black;color:white;" align="left">Books</td>
+                        
+                        <c:forEach var="a" items="${author.bookSet}" varStatus="rowCount">
+                            <td><input type="text" value="${a.bookId}" readonly></td>
+                            <td><input type="text" value="${a.bookTitle}"></td>
+                        </c:forEach>    
+                    </tr>
+
+                    </c:when>
+                </c:choose>
+                        
+                <c:choose>
                     <c:when test="${not empty author}">
                         <tr>
                             <td style="background-color: black;color:white;" align="left">Date Added</td>
-                    <td align="left"><input type="text" value="${author.dateAdded}" name="dateAdded" readonly /></td>
+                    <td align="left"><input type="text" value="${author.dateCreated}" name="dateAdded" readonly /></td>
                         </tr>         
                     </c:when>
                 </c:choose>
                 
                 <tr>
-                    <input type="submit" value="Cancel" name="action" />&nbsp;
-                    <input type="submit" value="Save" name="action" />
+                    <input type="submit" value="Cancel" name="submit" />&nbsp;
+                    <input type="submit" value="Save" name="submit" />
                 </tr>
             </table>
         </form>

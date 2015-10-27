@@ -5,18 +5,19 @@
 	 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 	 version="3.1">
     
+<!-- Begin Spring-specific configuration -->
     <context-param>
-        <param-name>dbStrategy</param-name>
-        <param-value>edu.wctc.kh.mybookapp2.models.MySqlDb</param-value>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:applicationContext.xml</param-value>
     </context-param>
-    <context-param>
-        <param-name>prepStmtBuilderStrategy</param-name>
-        <param-value>edu.wctc.kh.mybookapp2.models.SQLPrepStatementBuilder</param-value>
-    </context-param>
-    <context-param>
-        <param-name>daoStrategy</param-name>
-        <param-value>edu.wctc.kh.mybookapp2.models.AuthorDao</param-value>
-    </context-param>
+        
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+    <!-- END Spring configuration -->
     
     <session-config>
         <session-timeout>

@@ -20,8 +20,9 @@
     <body>
         <h1>Author List</h1>
         
-        <form method="POST" action="AuthorController?action=addEditDelete">
-        <input type="submit" value="Add/Edit" name="submit" />&nbsp;
+        <form method="POST" action="AuthorController?action=submitRequest">
+        <input type="submit" value="Add" name="submit" />&nbsp;
+        <input type="submit" value="Edit" name="submit" />&nbsp;
         <input type="submit" value="Delete" name="submit" />
         <br><br>
         <table width="500" border="1" cellspacing="0" cellpadding="4">
@@ -48,7 +49,8 @@
         </c:forEach>
         </table>
         <br>
-        <input type="submit" value="Add/Edit" name="submit" />&nbsp;
+        <input type="submit" value="Add" name="submit" />&nbsp;
+        <input type="submit" value="Edit" name="submit" />&nbsp;
         <input type="submit" value="Delete" name="submit" />
         </form>
         
