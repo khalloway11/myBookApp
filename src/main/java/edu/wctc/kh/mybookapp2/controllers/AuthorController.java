@@ -1,8 +1,8 @@
 package edu.wctc.kh.mybookapp2.controllers;
 
 import edu.wctc.kh.mybookapp2.entity.Author;
-import edu.wctc.kh.mybookapp2.service.AbstractFacade;
-import edu.wctc.kh.mybookapp2.service.AuthorFacade;
+import edu.wctc.kh.mybookapp2.entity.Book;
+import edu.wctc.kh.mybookapp2.service.AuthorService;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
@@ -11,12 +11,17 @@ import javax.inject.Inject;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import javax.sql.DataSource;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * The main controller for author-related activities
@@ -42,8 +47,6 @@ public class AuthorController extends HttpServlet {
     private static final String SAVE_ACTION = "Save";
     private static final String ACTION_PARAM = "action";
     
-    @Inject
-    private AbstractFacade<Author> authService;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -62,14 +65,13 @@ public class AuthorController extends HttpServlet {
         String action = request.getParameter(ACTION_PARAM);
 
         /*
-         For now we are hard-coding the strategy objects into this
-         controller. In the future we'll auto inject them from a config
-         file. Also, the DAO opens/closes a connection on each method call,
-         which is not very efficient. In the future we'll learn how to use
-         a connection pool to improve this.
-         */
-
-        List<Author> authors = null;
+            This is how you inject a Spring service object into your servlet. Note
+            that the bean name must match the name in your service class.
+        */
+        ServletContext sctx = getServletContext();
+        WebApplicationContext ctx
+                = WebApplicationContextUtils.getWebApplicationContext(sctx);
+        AuthorService authService = (AuthorService) ctx.getBean("authorService");
 
         try {
             /*
@@ -97,13 +99,13 @@ public class AuthorController extends HttpServlet {
                             break;
                         case UPDATE_ACTION:
                             String authorID = request.getParameter("authorId");
-                            Author author = authService.find(new Integer(authorID));
+                            Author author = authService.findById(authorID);
                             destination = EDIT_PAGE;
                             request.setAttribute("author", author);
                             break;
                         case DELETE_ACTION:
                             authorID = request.getParameter("authorId");
-                            author = authService.find(new Integer(authorID));
+                            author = authService.findById(authorID);
                             authService.remove(author);
                             this.refreshList(authService, request);
                             destination = LIST_PAGE;
@@ -115,7 +117,7 @@ public class AuthorController extends HttpServlet {
                         case SAVE_ACTION:
                             destination=LIST_PAGE;
                             authorID = request.getParameter("authorId");
-                            author = authService.find(new Integer(authorID));
+                            author = authService.findById(authorID);
                     }
 //                default:
 //                    // no param identified in request, must be an error
@@ -134,7 +136,7 @@ public class AuthorController extends HttpServlet {
         dispatcher.forward(request, response);
     }
     
-    private void refreshList(AbstractFacade<Author> authService, HttpServletRequest request){
+    private void refreshList(AuthorService authService, HttpServletRequest request){
         List<Author> authors = authService.findAll();
         request.setAttribute("authors", authors);
     }
