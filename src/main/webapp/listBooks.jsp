@@ -8,6 +8,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html>
 <html>
@@ -27,6 +28,7 @@
             <tr style="background-color: black;color:white;">
                 <th align="left" class="tableHead">ID</th>
                 <th align="left" class="tableHead">Book Title</th>
+                <th align="left" class="tableHead">ISBN</th>
             </tr>
         <c:forEach var="a" items="${books}" varStatus="rowCount">
             <c:choose>
@@ -39,6 +41,7 @@
             </c:choose>
             <td><input type="checkbox" name="bookId" value="${a.bookId}" /></td>
             <td align="left">${a.bookTitle}</td>
+            <td align="left">${a.bookIsbn}</td>
         </tr>
         </c:forEach>
         </table>
@@ -52,5 +55,6 @@
             <p style="font-weight: bold;color: red;width:500px;">Sorry, data could not be retrieved:<br>
                 ${errMsg}</p>
         </c:if>
+                    <a href="index.html">Back to Index</a>
     </body>
 </html>

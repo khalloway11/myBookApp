@@ -95,7 +95,7 @@ public class AuthorController extends HttpServlet {
                     String subrequest = request.getParameter(SUBMIT_PARAM);
                     switch(subrequest){
                         case ADD_ACTION:
-                            //request.setAttribute("author",authorName);
+                            destination = ADD_PAGE;
                             break;
                         case UPDATE_ACTION:
                             String authorID = request.getParameter("authorId");
@@ -115,11 +115,19 @@ public class AuthorController extends HttpServlet {
                             this.refreshList(authService, request);
                             break;
                         case SAVE_ACTION:
-                            destination=LIST_PAGE;
+                            destination = LIST_PAGE;
                             authorID = request.getParameter("authorId");
                             author = authService.findById(authorID);
+                            author.setAuthorName(request.getParameter("authorName"));
+                            authService.edit(author);
+                            this.refreshList(authService, request);
+                            break;
+                        default:
+                            //something was wrong
+                            request.setAttribute("errMsg", NO_PARAM_ERR_MSG);
+                            destination = LIST_PAGE;
                     }
-//                default:
+                default:
 //                    // no param identified in request, must be an error
 //                    request.setAttribute("errMsg", NO_PARAM_ERR_MSG);
 //                    destination = LIST_PAGE;

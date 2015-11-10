@@ -10,6 +10,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html>
 <html>
@@ -21,6 +22,8 @@
         <h1>Author List</h1>
         
         <form method="POST" action="AuthorController?action=submitRequest">
+            <sec:csrfInput />
+            <sec:authorize access="hasAnyRole('ROLE_MGR')">
             <table width="500" border="1" cellspacing="0" cellpadding="4">
                 <!--
                     In the EL expression below using 'not empty' is better than
@@ -68,6 +71,7 @@
                     <input type="submit" value="Save" name="submit" />
                 </tr>
             </table>
+            </sec:authorize>
         </form>
     </body>
 </html>

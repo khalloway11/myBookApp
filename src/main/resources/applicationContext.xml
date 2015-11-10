@@ -76,7 +76,7 @@
                     delete-cookies="JSESSIONID"
                     logout-success-url="/login.jsp" />
         
-        <sec:csrf disabled="false"/>
+        <sec:csrf disabled="true"/>
         <!-- end Spring Security Config -->
 
     </sec:http>

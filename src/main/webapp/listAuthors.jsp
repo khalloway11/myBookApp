@@ -10,6 +10,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html>
 <html>
@@ -19,12 +20,15 @@
     </head>
     <body>
         <h1>Author List</h1>
-        
+        <sec:authorize access="hasAnyRole('ROLE_USER')">Logged in as User</sec:authorize>
+        <sec:authorize access="hasAnyRole('ROLE_MGR')">Logged in as Manager
+    
         <form method="POST" action="AuthorController?action=submitRequest">
         <input type="submit" value="Add" name="submit" />&nbsp;
         <input type="submit" value="Edit" name="submit" />&nbsp;
         <input type="submit" value="Delete" name="submit" />
         <br><br>
+        </sec:authorize>
         <table width="500" border="1" cellspacing="0" cellpadding="4">
             <tr style="background-color: black;color:white;">
                 <th align="left" class="tableHead">ID</th>
@@ -49,14 +53,17 @@
         </c:forEach>
         </table>
         <br>
+        <sec:authorize access="hasAnyRole('ROLE_MGR')">
         <input type="submit" value="Add" name="submit" />&nbsp;
         <input type="submit" value="Edit" name="submit" />&nbsp;
         <input type="submit" value="Delete" name="submit" />
+        </sec:authorize>
         </form>
         
         <c:if test="${errMsg != null}">
             <p style="font-weight: bold;color: red;width:500px;">Sorry, data could not be retrieved:<br>
                 ${errMsg}</p>
         </c:if>
+        <a href="index.html">Back to Index</a>
     </body>
 </html>

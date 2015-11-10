@@ -90,7 +90,7 @@ public class BookController extends HttpServlet {
                     String subrequest = request.getParameter(SUBMIT_PARAM);
                     switch(subrequest){
                         case ADD_ACTION:
-                            //request.setAttribute("book",bookName);
+                            destination = ADD_PAGE;
                             break;
                         case UPDATE_ACTION:
                             String bookID = request.getParameter("bookId");
